@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import { Artwork } from './constants';
-import { getArtwork, getImageUrl } from './helpers';
+import { getArtwork } from './helpers';
 import { Spinner, SuccessToast } from './Utils';
 import { RatingSelector } from './RatingSelector';
+import { ArtInformation } from './ArtInformation';
 
 interface ArtDetailsData {
   title?: string;
   artist_title?: string;
   image_id?: string;
+  id?: number;
 }
 
 interface FullArtDetails {
@@ -16,9 +18,15 @@ interface FullArtDetails {
   rating: number | null;
 }
 
-type ArtDetails = FullArtDetails | null;
+export type ArtDetails = FullArtDetails | null;
 
-export default function ArtItemWrapper({ artwork }: { artwork: Artwork }) {
+export default function ArtItemWrapper({
+  artwork,
+  removeItem,
+}: {
+  artwork: Artwork;
+  removeItem: (n: number) => void;
+}) {
   const [artDetails, setArtDetails] = useState<ArtDetails>(null);
 
   useEffect(() => {
@@ -33,7 +41,13 @@ export default function ArtItemWrapper({ artwork }: { artwork: Artwork }) {
 
   return (
     <Box className="item" sx={{ height: '400px', width: '100%' }}>
-      {!!artDetails && <ArtItem artwork={artwork} artDetails={artDetails} />}
+      {!!artDetails && (
+        <ArtItem
+          artwork={artwork}
+          artDetails={artDetails}
+          removeItem={removeItem}
+        />
+      )}
     </Box>
   );
 }
@@ -41,9 +55,11 @@ export default function ArtItemWrapper({ artwork }: { artwork: Artwork }) {
 export function ArtItem({
   artwork,
   artDetails,
+  removeItem,
 }: {
   artwork: Artwork;
   artDetails: ArtDetails | undefined;
+  removeItem: (n: number) => void;
 }) {
   const [rated, setRated] = useState<boolean>(false);
   const [rating, setRating] = useState<number | null>(null);
@@ -62,7 +78,6 @@ export function ArtItem({
 
   return (
     <>
-      {displayToast && <SuccessToast callback={setDisplayToast} />}
       <Grid
         container
         sx={{
@@ -78,22 +93,11 @@ export function ArtItem({
             justifyContent: 'space-between',
           }}
         >
-          <Box>
-            <h2>{artDetails?.data?.title || 'Unavailable'}</h2>
-            <h3>{artDetails?.data?.artist_title || 'Unavailable'}</h3>
-            <img
-              style={{ height: 100 }}
-              src={
-                artDetails?.data?.image_id
-                  ? getImageUrl(artDetails.data.image_id)
-                  : ''
-              }
-              alt={artDetails?.data?.title || 'Unavailable'}
-            />
-            <p>
-              Rating: <span data-testid="rating">{rating || 'Unrated'}</span>
-            </p>
-          </Box>
+          <ArtInformation
+            artDetails={artDetails}
+            rating={rating}
+            removeItem={removeItem}
+          />
           {!rated && (
             <RatingSelector
               callback={() => {
@@ -105,6 +109,7 @@ export function ArtItem({
               setRating={setRating}
             />
           )}
+          {displayToast && <SuccessToast callback={setDisplayToast} />}
         </Box>
       </Grid>
     </>

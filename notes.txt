@@ -2,6 +2,7 @@ To Do:
 
 - Better typing / type predicates for API responses
 - Tweak file structure to declutter
+- Search on enter
 - Make test stub data be varied
 - Implement a rating failure error toast
 - Additional tests (search/add, remove)

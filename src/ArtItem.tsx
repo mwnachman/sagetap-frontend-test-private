@@ -41,7 +41,7 @@ export function ArtItem({
     if (displayToast) {
       const timer = setTimeout(() => {
         setDisplayToast(false);
-      }, 5000);
+      }, 3000);
       return () => {
         clearTimeout(timer);
       };

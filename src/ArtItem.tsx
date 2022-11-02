@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { Spinner, SuccessToast } from './Utils';
 import { RatingSelector } from './RatingSelector';
 import { ArtInformation } from './ArtInformation';
@@ -40,7 +41,7 @@ export function ArtItem({
     if (displayToast) {
       const timer = setTimeout(() => {
         setDisplayToast(false);
-      }, 3000);
+      }, 5000);
       return () => {
         clearTimeout(timer);
       };
@@ -49,6 +50,21 @@ export function ArtItem({
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'right',
+        }}
+      >
+        <CloseOutlinedIcon
+          onClick={() => {
+            if (artDetails?.data?.id) {
+              removeItem(artDetails.data.id);
+            }
+          }}
+        />
+      </Box>
       <Grid
         container
         sx={{
@@ -64,11 +80,7 @@ export function ArtItem({
             justifyContent: 'space-between',
           }}
         >
-          <ArtInformation
-            artDetails={artDetails}
-            rating={rating}
-            removeItem={removeItem}
-          />
+          <ArtInformation artDetails={artDetails} rating={rating} />
           {!rated && artDetails?.data?.id && (
             <RatingSelector
               callback={() => {

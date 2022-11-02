@@ -25,3 +25,15 @@ export async function getSeedArtworks() {
   );
   return artResponses.filter((res) => !!res?.data?.id);
 }
+
+const postUrl = 'https://v0867.mocklab.io/rating';
+
+export function submitRating(id: number, rating: number) {
+  return fetch(postUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+      id,
+      rating,
+    }),
+  }).then((res) => res.json());
+}

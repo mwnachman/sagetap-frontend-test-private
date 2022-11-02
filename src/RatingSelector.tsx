@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, CircularProgress, Rating } from '@mui/material';
 import { ArtDetails } from './App';
+import { submitRating } from './helpers';
 
 export function RatingSelector({
   artDetails,
@@ -13,29 +14,25 @@ export function RatingSelector({
   rating: number | null;
   setRating: (n: number) => void;
 }) {
-  const id = artDetails?.data?.id || '';
+  const id = artDetails?.data?.id || undefined;
   const [fetching, setFetching] = useState<boolean>(false);
+
   const submit = async () => {
-    setFetching(true);
-    try {
-      fetch('https://v0867.mocklab.io/rating', {
-        method: 'POST',
-        body: JSON.stringify({
-          id,
-          rating,
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.message === 'Success') {
-            callback();
-          }
-        })
-        .then(() => {
-          setFetching(false);
-        });
-    } catch {
-      setFetching(false);
+    if (id && rating) {
+      setFetching(true);
+      try {
+        submitRating(id, rating)
+          .then((res) => {
+            if (res.message === 'Success') {
+              callback();
+            }
+          })
+          .then(() => {
+            setFetching(false);
+          });
+      } catch {
+        setFetching(false);
+      }
     }
   };
   return (
@@ -56,7 +53,6 @@ export function RatingSelector({
         size="small"
         disabled={!rating}
         onClick={submit}
-        data-testid={`${id}-button-submit`}
       >
         {fetching ? <CircularProgress size={23} thickness={4} /> : 'Submit'}
       </Button>

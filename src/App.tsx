@@ -4,17 +4,17 @@ import './App.css';
 import ArtItemWrapper from './ArtItem';
 import { SearchArt } from './SearchArt';
 import { getSeedArtworks } from './helpers';
+import { isFullArtDetail } from './helpers/types';
 
 interface ArtDetailsData {
+  id: number;
   title?: string;
   artist_title?: string;
   image_id?: string;
-  id?: number;
 }
 
 export interface FullArtDetails {
-  data?: ArtDetailsData | undefined;
-  rating: number | null;
+  data: ArtDetailsData;
 }
 
 export type ArtDetails = FullArtDetails | null;
@@ -51,7 +51,7 @@ export function App() {
       <SearchArt addItem={addItem} artworks={artworks} />
       <Grid container spacing={2}>
         {(artworks || []).map((artDetail: ArtDetails) => {
-          if (artDetail?.data?.id) {
+          if (isFullArtDetail(artDetail)) {
             return (
               <Grid
                 item
